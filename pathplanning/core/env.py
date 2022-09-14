@@ -52,6 +52,9 @@ class PHIDIASEnvironment:
     def addItem(self, item: SimPoint):
         self.items.append(item)
         
+    def removeItem(self, item: SimPoint):
+        self.items = [ i for i in self.items if i.x != item.x and i.y != item.y ]
+        
     def reset(self):
         self.cart.reset(SimPoint(0, 0))
         self.items = []

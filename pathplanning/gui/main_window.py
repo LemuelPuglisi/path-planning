@@ -11,7 +11,6 @@ from pathplanning.gui.drawing_panel import DrawingPanelWidget
 from pathplanning.core.env import Environment
 from pathplanning.core.dynamics.base import RoboticSystem
 
-
 class MainWindow(QMainWindow):
     
     def __init__(self, env: Environment, 

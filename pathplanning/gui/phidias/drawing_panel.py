@@ -33,7 +33,7 @@ class PHIDIASDrawingPanelWidget(QWidget):
         self.robot_pic = QPixmap(robot_image)        
         self.item_pic = QPixmap(item_image)        
 
-        self.delta_t = 1e-4
+        self.delta_t = 1e-2
         self._timer_painter = QTimer(self)
         self._timer_painter.timeout.connect(self.go)
         self._timer_painter.setInterval(self.delta_t)

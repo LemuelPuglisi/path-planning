@@ -3,6 +3,7 @@ from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 
 from pathplanning.core.base import DrawPoint
+from pathplanning.core.phidias.handler import PHIDIASHandler
 from pathplanning.gui.phidias.drawing_panel import PHIDIASDrawingPanelWidget
 from pathplanning.gui.phidias.sidebar import PHIDIASSideBarWidget
 from pathplanning.core.env import PHIDIASEnvironment
@@ -12,7 +13,8 @@ from pathplanning.core.dynamics.base import RoboticSystem
 class PHIDIASMainWindow(QMainWindow):
     
     def __init__(self, env: PHIDIASEnvironment, 
-                       system: RoboticSystem):
+                       system: RoboticSystem, 
+                       handler: PHIDIASHandler):
         super(PHIDIASMainWindow, self).__init__()
                   
         self.setWindowTitle("path-planning")
@@ -20,6 +22,7 @@ class PHIDIASMainWindow(QMainWindow):
 
         self.env = env
         self.system = system
+        self.handler = handler
 
         self.drawing_panel = PHIDIASDrawingPanelWidget(env, system)
         self.sidebar_widget = PHIDIASSideBarWidget()
@@ -43,8 +46,12 @@ class PHIDIASMainWindow(QMainWindow):
         main_widget.setPalette(main_widget_palette)
         main_widget.setLayout(main_layout)
         self.setCentralWidget(main_widget)
-        
                 
+    def startSimulation(self):
+        self.system.reset()
+        self.drawing_panel.reset() 
+        self.drawing_panel.start()
+
     def awaitStartingPoint(self):
         self.drawing_panel.mousePressEvent = self.handleStartingPoint        
         
@@ -62,8 +69,13 @@ class PHIDIASMainWindow(QMainWindow):
     def handleItemAddition(self, event):
         self.drawing_panel.mousePressEvent = lambda e: None
         position = event.pos()
-        point = DrawPoint(position.x(), position.y())
-        # ALSO NOTIFY PHIDIAS OF THE NEW ITEM!!
-        self.env.addItem(point.toSimPoint())
+        item = DrawPoint(position.x(), position.y()).toSimPoint()
+
+        try:
+            self.handler.notifyItem(item)
+        except:
+            self.sidebar_widget.instruct('PHIDIAS handler not initialized.')
+            
+        self.env.addItem(item)
         self.sidebar_widget.releaseButtons()
         self.drawing_panel.update()

@@ -7,14 +7,16 @@ from pathplanning.core.dynamics.base import RoboticSystem
 from pathplanning.core.cinematics import Cart
 from pathplanning.core.controllers import PIDSat, Polar2DController, StraightLine2DMotion
 from pathplanning.core.geometry import normalizeAngle
+from pathplanning.core.patterns.observer import Observable
 
-class TwoStepCartRobot(RoboticSystem):
+class TwoStepCartRobot(RoboticSystem, Observable):
     
     FIXHEADING=0
     MOVE2POINT=1
 
-    def __init__(self, cart: Cart, heading_threshold=5e-5, dist_threshold=1e-2):
-        super().__init__(.005)
+    def __init__(self, cart: Cart, heading_threshold=5e-5, dist_threshold=1e-2, delta_t=.005):
+        RoboticSystem.__init__(self, delta_t)
+        Observable.__init__(self)
         self.cart = cart
         self.heading_controller         = PIDSat(8, 0, 0, 1)
         self.linear_speed_controller    = PIDSat(15, 8, 0, 5) 
@@ -22,10 +24,12 @@ class TwoStepCartRobot(RoboticSystem):
         self.polar_controller           = Polar2DController(2.5, 2, 2.0 , 2)
         self.trajectory                 = StraightLine2DMotion(1.5, 2, 2)
         
+        self.target = None
         self.heading_threshold      = heading_threshold
         self.distance_threshold     = dist_threshold
         self.state = self.FIXHEADING
         self.path = []
+        self.observers = []
         
         
     def reset(self):
@@ -35,10 +39,12 @@ class TwoStepCartRobot(RoboticSystem):
         self.angular_speed_controller.reset()
         self.polar_controller.reset()
         self.state = self.FIXHEADING
-        self.path = []
-        
+        self.target = None
+                
         
     def run(self):
+        if self.target is None: return True
+        
         if self.state == self.FIXHEADING:
             error = self.headingError()
             T = self.heading_controller.evaluateError(self.delta_t, error)
@@ -60,7 +66,9 @@ class TwoStepCartRobot(RoboticSystem):
 
             if distance < self.distance_threshold:
                 if len(self.path) == 0: 
-                    return False
+                    self.notifyObservers('end', { 'target': self.target })
+                    self.reset()
+                    return True
                                 
                 new_target = self.path.pop()
                 self.target = new_target

@@ -11,7 +11,8 @@ setuptools.setup(name='path-planning',
                  py_modules=['pathplanning'],
                   entry_points={
                      'console_scripts': [
-                        'path-planning = pathplanning.cli:run_application', 
+                        'path-planning = pathplanning.cli:run_application',
+                        'path-planning-strategy = pathplanning.core.phidias.strategy:phidias_client'
                      ]
                  },
                  install_requires=[

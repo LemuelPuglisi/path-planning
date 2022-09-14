@@ -13,6 +13,12 @@ DP_OBSTACLE_PIC_PATH = '/../../assets/icons/bedrock.png'
 DP_ITEM_PIC_PATH = '/../../assets/icons/diamond.png'
 
 #-----------------------
+# PHIDIAS integration.
+#-----------------------
+
+PHIDIAS_HANDLER_PORT = 6566
+
+#-----------------------
 # convenience constants.
 #-----------------------
 

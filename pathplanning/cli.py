@@ -6,6 +6,7 @@ from importlib import util as libutil
 
 
 from pathplanning.core.algorithms.voronoi_diagrams_solver import VoronoiDiagramSolver
+from pathplanning.core.phidias.handler import PHIDIASHandler
 from pathplanning.gui.main_window import MainWindow
 from pathplanning.gui.phidias.main_window import PHIDIASMainWindow
 from pathplanning.gui.darktheme import set_dark_theme
@@ -44,9 +45,11 @@ def run_application():
             exit()
         
         cart = Cart(SimPoint(.2, .2))
-        two_step = TwoStepCartRobot(cart, 1e-5, 1e-2)
+        two_step = TwoStepCartRobot(cart, 1e-5, 1e-2, 1e-3)
         env = PHIDIASEnvironment(cart)
-        main_window = PHIDIASMainWindow(env, two_step)
+        handler = PHIDIASHandler(two_step, env)
+        main_window = PHIDIASMainWindow(env, two_step, handler)
+        main_window.startSimulation()
         
     main_window.show()
     app.exec()
