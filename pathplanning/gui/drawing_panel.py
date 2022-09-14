@@ -19,7 +19,6 @@ class DrawingPanelWidget(QWidget):
         self.system = system
         self.algorithm = algorithm
         self.setFixedSize(QSize(PANEL_W, PANEL_H))
-        self.simulation_started = False
         self.initUI()
 
 
@@ -43,12 +42,10 @@ class DrawingPanelWidget(QWidget):
 
     def start(self):
         self._timer_painter.start()
-        self.simulation_started = True
         
         
     def reset(self):
         self._timer_painter.stop()
-        self.simulation_started = False
         self.update()
 
     def go(self):
