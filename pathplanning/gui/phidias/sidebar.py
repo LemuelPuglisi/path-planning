@@ -4,8 +4,15 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QListWidg
 class PHIDIASSideBarWidget(QWidget):
     
     PHIDIAS_INSTR = """
-    Start a phidias client using 
-    ---
+    Start a PHIDIAS client using
+    the following command in another shell: 
+    
+    path-planning-strategy
+    
+    Then submit `connect()` procedure.
+    Add items using the button above, and
+    let the robot pick them up using the 
+    `pick()` procedure.
     """
     
     def __init__(self):
