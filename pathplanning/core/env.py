@@ -38,3 +38,20 @@ class Environment:
         self.cart.reset(SimPoint(0, 0))
         self.target = SimPoint(0, 0)
         self.obstacles = []
+        
+        
+class PHIDIASEnvironment:
+    
+    def __init__(self, cart: Cart):
+        self.cart = cart
+        self.items = []
+
+    def moveCartStationary(self, point: SimPoint):
+        self.cart.reset(point)
+                
+    def addItem(self, item: SimPoint):
+        self.items.append(item)
+        
+    def reset(self):
+        self.cart.reset(SimPoint(0, 0))
+        self.items = []

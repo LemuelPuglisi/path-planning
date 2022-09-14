@@ -11,13 +11,12 @@ from pathplanning.core.dynamics.base import RoboticSystem
 from pathplanning.core.env import Environment
 
 
-class DrawingPanelWidget(QWidget):
+class PHIDIASDrawingPanelWidget(QWidget):
         
-    def __init__(self, env: Environment, system: RoboticSystem, algorithm: PathPlanningBase):
+    def __init__(self, env: Environment, system: RoboticSystem):
         super().__init__()
         self.env = env
         self.system = system
-        self.algorithm = algorithm
         self.setFixedSize(QSize(PANEL_W, PANEL_H))
         self.initUI()
 
@@ -68,11 +67,6 @@ class DrawingPanelWidget(QWidget):
         self.draw_rect(qp)
         
         #---------------------
-        # Paint the algorithm    
-        #---------------------   
-        self.algorithm.draw(qp)
-
-        #---------------------
         # Paint the measurements   
         #---------------------   
         qp.setPen(QColor('white'))
@@ -81,19 +75,19 @@ class DrawingPanelWidget(QWidget):
         #---------------------
         # Paint the obstacles    
         #---------------------    
-        for o in self.env.obstacles:
-            qp.setPen(QColor('red'))
-            qp.setBrush(QColor('red'))
-            drawable = o.toDrawPoint().toTopLeft(OBS_W, OBS_H).toQPoint()
-            qp.drawPixmap(drawable, self.obstacle_pic)        
+        # for o in self.env.obstacles:
+        #     qp.setPen(QColor('red'))
+        #     qp.setBrush(QColor('red'))
+        #     drawable = o.toDrawPoint().toTopLeft(OBS_W, OBS_H).toQPoint()
+        #     qp.drawPixmap(drawable, self.obstacle_pic)        
 
         # ---------------------
         # Paint the target    
         # ---------------------    
-        qp.setPen(QColor('#ed666f'))
-        qp.setBrush(QColor('#ed666f'))
-        target = self.env.target.toDrawPoint().toTopLeft(10, 10)
-        qp.drawEllipse(target.toQPoint(), 10, 10)
+        # qp.setPen(QColor('#ed666f'))
+        # qp.setBrush(QColor('#ed666f'))
+        # target = self.env.target.toDrawPoint().toTopLeft(10, 10)
+        # qp.drawEllipse(target.toQPoint(), 10, 10)
 
         # ---------------------
         # Paint the robot    
