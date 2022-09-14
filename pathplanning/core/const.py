@@ -10,6 +10,7 @@ PANEL_H=550     # drawing panel height (draw r.s.)
 
 DP_ROBOT_PIC_PATH = '/../../assets/icons/robot.png'
 DP_OBSTACLE_PIC_PATH = '/../../assets/icons/bedrock.png'
+DP_ITEM_PIC_PATH = '/../../assets/icons/diamond.png'
 
 #-----------------------
 # convenience constants.

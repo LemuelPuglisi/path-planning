@@ -5,13 +5,13 @@ from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 from pathplanning.core.base import DrawPoint
 from pathplanning.gui.phidias.drawing_panel import PHIDIASDrawingPanelWidget
 from pathplanning.gui.phidias.sidebar import PHIDIASSideBarWidget
-from pathplanning.core.env import Environment
+from pathplanning.core.env import PHIDIASEnvironment
 from pathplanning.core.dynamics.base import RoboticSystem
 
 
 class PHIDIASMainWindow(QMainWindow):
     
-    def __init__(self, env: Environment, 
+    def __init__(self, env: PHIDIASEnvironment, 
                        system: RoboticSystem):
         super(PHIDIASMainWindow, self).__init__()
                   
@@ -27,7 +27,9 @@ class PHIDIASMainWindow(QMainWindow):
         # we move the component "wiring" to the
         # upper component. This can be replaced to 
         # some design patterns later. 
-        # [...]        
+        self.sidebar_widget.starting_point_button.clicked.connect(self.awaitStartingPoint)
+        self.sidebar_widget.add_item_button.clicked.connect(self.awaitItemAddition)
+
 
         main_layout = QHBoxLayout()
         main_layout.addWidget(self.sidebar_widget)
@@ -43,4 +45,25 @@ class PHIDIASMainWindow(QMainWindow):
         self.setCentralWidget(main_widget)
         
                 
+    def awaitStartingPoint(self):
+        self.drawing_panel.mousePressEvent = self.handleStartingPoint        
         
+    def handleStartingPoint(self, event):
+        self.drawing_panel.mousePressEvent = lambda e: None
+        position = event.pos()
+        point = DrawPoint(position.x(), position.y())       
+        self.env.moveCartStationary(point.toSimPoint())
+        self.sidebar_widget.releaseButtons()
+        self.drawing_panel.update()
+        
+    def awaitItemAddition(self):
+        self.drawing_panel.mousePressEvent = self.handleItemAddition        
+
+    def handleItemAddition(self, event):
+        self.drawing_panel.mousePressEvent = lambda e: None
+        position = event.pos()
+        point = DrawPoint(position.x(), position.y())
+        # ALSO NOTIFY PHIDIAS OF THE NEW ITEM!!
+        self.env.addItem(point.toSimPoint())
+        self.sidebar_widget.releaseButtons()
+        self.drawing_panel.update()

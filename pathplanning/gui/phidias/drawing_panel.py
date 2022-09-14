@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QColor, QPalette, QPainter, QTransform, QPixmap
 
 from pathplanning.core.algorithms.base import PathPlanningBase
-from pathplanning.core.const import DP_OBSTACLE_PIC_PATH, DP_ROBOT_PIC_PATH, OBS_H, OBS_W, PANEL_H, PANEL_W
+from pathplanning.core.const import DP_ITEM_PIC_PATH, DP_ROBOT_PIC_PATH, OBS_H, OBS_W, PANEL_H, PANEL_W
 from pathplanning.core.dynamics.base import RoboticSystem
 from pathplanning.core.env import Environment
 
@@ -28,10 +28,10 @@ class PHIDIASDrawingPanelWidget(QWidget):
         self.setPalette(drawing_panel_palette)
         
         current_path = pathlib.Path(__file__).parent.resolve()
-        robot_image = str(current_path) + DP_ROBOT_PIC_PATH
-        obstacle_image = str(current_path) + DP_OBSTACLE_PIC_PATH
+        robot_image = str(current_path) + '/../' + DP_ROBOT_PIC_PATH
+        item_image = str(current_path) + '/../' + DP_ITEM_PIC_PATH
         self.robot_pic = QPixmap(robot_image)        
-        self.obstacle_pic = QPixmap(obstacle_image)        
+        self.item_pic = QPixmap(item_image)        
 
         self.delta_t = 1e-4
         self._timer_painter = QTimer(self)
@@ -73,21 +73,11 @@ class PHIDIASDrawingPanelWidget(QWidget):
         self.draw_measures(qp)
 
         #---------------------
-        # Paint the obstacles    
+        # Paint the items    
         #---------------------    
-        # for o in self.env.obstacles:
-        #     qp.setPen(QColor('red'))
-        #     qp.setBrush(QColor('red'))
-        #     drawable = o.toDrawPoint().toTopLeft(OBS_W, OBS_H).toQPoint()
-        #     qp.drawPixmap(drawable, self.obstacle_pic)        
-
-        # ---------------------
-        # Paint the target    
-        # ---------------------    
-        # qp.setPen(QColor('#ed666f'))
-        # qp.setBrush(QColor('#ed666f'))
-        # target = self.env.target.toDrawPoint().toTopLeft(10, 10)
-        # qp.drawEllipse(target.toQPoint(), 10, 10)
+        for o in self.env.items:
+            drawable = o.toDrawPoint().toTopLeft(OBS_W, OBS_H).toQPoint()
+            qp.drawPixmap(drawable, self.item_pic)        
 
         # ---------------------
         # Paint the robot    
@@ -110,7 +100,6 @@ class PHIDIASDrawingPanelWidget(QWidget):
         # BECAUSE: everything we put here will rotate
         # according to theta, so put the obstacles ABOVE
         # this block. 
-        s = self.robot_pic.size()
         qp.drawPixmap(top_left.x, top_left.y, self.robot_pic)
         qp.end()
         
