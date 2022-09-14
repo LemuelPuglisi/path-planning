@@ -29,11 +29,6 @@ class MainWindow(QMainWindow):
 
         self.drawing_panel = DrawingPanelWidget(env, system, algorithm)
         self.sidebar_widget = SideBarWidget()
-        self.sidebar_widget._getClassButtons()
-
-        # behavioural attributes
-        self.await_point_selection = False
-        self.current_point_selected = None
 
         # we move the component "wiring" to the
         # upper component. This can be replaced to 
