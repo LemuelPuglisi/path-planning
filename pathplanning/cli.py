@@ -2,6 +2,8 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 from argparse import ArgumentParser
+from importlib import util as libutil
+
 
 from pathplanning.core.algorithms.voronoi_diagrams_solver import VoronoiDiagramSolver
 from pathplanning.gui.main_window import MainWindow
@@ -32,8 +34,16 @@ def run_application():
         algo = VoronoiDiagramSolver()
         main_window = MainWindow(env, two_step, algo)
     else:
-        target = SimPoint(.2, .2)
-        cart = Cart(SimPoint(0, 0))
+
+        if libutil.find_spec('phidias') is None:
+            print("""
+            PHIDIAS not installed 😔. Go to:
+            https://github.com/LemuelPuglisi/phidias
+            and follow the installation instructions. 
+            """)
+            exit()
+        
+        cart = Cart(SimPoint(.2, .2))
         two_step = TwoStepCartRobot(cart, 1e-5, 1e-2)
         env = PHIDIASEnvironment(cart)
         main_window = PHIDIASMainWindow(env, two_step)
