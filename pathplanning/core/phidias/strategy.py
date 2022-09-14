@@ -18,6 +18,7 @@ def phidias_client():
     def_vars('X', 'Y', 'F')
 
     class main(Agent):
+        
         def main(self):
             
             connect() >> [ +connected()[{'to': 'robot@127.0.0.1:6566'}] ]
@@ -27,6 +28,8 @@ def phidias_client():
             pick() >> [ show_line('every item has been picked.') ]
             
             +item_picked(X, Y)[{'from':F}] / item(X, Y) >> [ -item(X, Y), show_line(X, ' ', Y), pick() ]
+
+            +item_picked(X, Y)[{'from':F}] >> [ show_line(X, ' ', Y, ' not recognized in kb.')]
             
 
     ag = main()
