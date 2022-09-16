@@ -73,8 +73,9 @@ class PHIDIASMainWindow(QMainWindow):
     def handleContainerSetup(self, event):
         self.drawing_panel.mousePressEvent = lambda e: None
         position = event.pos()
-        point = DrawPoint(position.x(), position.y())       
-        self.env.moveContainer(point.toSimPoint())
+        point = DrawPoint(position.x(), position.y()).toSimPoint()
+        self.env.moveContainer(point)
+        self.handler.sendBelief('container', [ *point() ])       
         self.sidebar_widget.releaseButtons()
         self.drawing_panel.update()
         

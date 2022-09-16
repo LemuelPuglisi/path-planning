@@ -8,6 +8,8 @@ from pathplanning.core.const import PHIDIAS_HANDLER_PORT
 class connected(Belief): pass
 class item(Belief): pass
 class goto(Belief): pass
+class container(SingletonBelief): pass
+class current_item(SingletonBelief): pass
 
 class connect(Procedure): pass
 class pick(Procedure): pass
@@ -20,26 +22,58 @@ def phidias_client():
 
     remote_dest = { 'to': f'robot@127.0.0.1:{PHIDIAS_HANDLER_PORT}'  }
 
-    def_vars('X', 'Y', 'F')
+    def_vars('X', 'Y', 'Xc', 'Yc', 'F')
 
     class main(Agent):
         
         def main(self):
             
-            connect() / item(X, Y) >> [ -item(X, Y), connect() ]
+            connect() / item(X, Y) >> [ 
+                                       
+                -item(X, Y), connect() 
             
-            connect() >> [ +connected()[remote_dest] ]
+            ]
             
-            pick() / item(X, Y) >> [ +goto(X, Y)[remote_dest] ] 
+            connect() >> [ 
+                
+                +connected()[remote_dest] 
             
-            pick() >> [ show_line('every item has been picked.') ]
+            ]
             
-            +item_released(X, Y)[{'from': F}] / item(X, Y) >> [ -item(X, Y), show_line(X, ' ', Y), pick() ]
+            pick() / item(X, Y) >> [ 
 
-            +item_released(X, Y)[{'from': F}] >> [ show_line(X, ' ', Y, ' not recognized in kb.')]
+                +goto(X, Y)[remote_dest] 
+                
+            ] 
             
-            +item_picked(X, Y)[{'from': F}] / item(X, Y) >> [ show_line("robot picked (", X, " ", Y, ")") ]
+            pick() >> [ 
+                       
+                show_line('every item has been picked.') 
+                
+            ]
 
+            +item_picked(X, Y)[{'from': F}] / (container(Xc, Yc) & item(X, Y)) >> [ 
+                                                                    
+                +current_item(X, Y),
+                -item(X, Y),
+                show_line("item (", X, ", ", Y, ") picked."),
+                +goto(Xc, Yc)[remote_dest] 
+            
+            ]
+
+            +item_released()[{'from': F}] / current_item(X, Y) >> [ 
+                                                               
+                -current_item(X, Y),
+                show_line("item (", X, ", ", Y, ") released."),
+                pick()
+                
+            ]            
+
+            +container(X, Y)[{'from': F}] >> [ 
+                                              
+                show_line('container position: (', X, ", ", Y, ")") 
+            
+            ]
 
     ag = main()
     ag.start()
