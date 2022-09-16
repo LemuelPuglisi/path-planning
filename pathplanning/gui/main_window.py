@@ -82,7 +82,6 @@ class MainWindow(QMainWindow):
             self.algorithm = FixedCellDecomposition()
         self.drawing_panel.algorithm = self.algorithm
 
-            
     def awaitStartingPoint(self):
         self.drawing_panel.mousePressEvent = self.handleStartingPoint
         

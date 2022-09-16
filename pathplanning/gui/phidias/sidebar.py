@@ -17,9 +17,10 @@ class PHIDIASSideBarWidget(QWidget):
     
     def __init__(self):
         super().__init__()
-        self.instructions_label = QLabel('Path planning instructions.')
+        self.instructions_label = QLabel('Please connect a PHIDIAS client.')
         self.phidias_instruction_label = QLabel(self.PHIDIAS_INSTR)
         self.starting_point_button = QPushButton('set starting point')
+        self.set_container_button = QPushButton('set container')
         self.add_item_button = QPushButton('add item')
         self.initUI()
         self.initEventHandling()
@@ -29,6 +30,7 @@ class PHIDIASSideBarWidget(QWidget):
         self.phidias_instruction_label.setStyleSheet('border: 1px solid white; padding: 5px;')
         self.sidebar_layout = QVBoxLayout()
         self.sidebar_layout.addWidget(self.starting_point_button)
+        self.sidebar_layout.addWidget(self.set_container_button)
         self.sidebar_layout.addWidget(self.add_item_button)
         self.sidebar_layout.addWidget(self.instructions_label)
         self.sidebar_layout.addWidget(self.phidias_instruction_label)
@@ -37,12 +39,17 @@ class PHIDIASSideBarWidget(QWidget):
         
     def initEventHandling(self):
         self.starting_point_button.clicked.connect(self.handleStartingPointClick)
+        self.set_container_button.clicked.connect(self.handleSetContainerClick)
         self.add_item_button.clicked.connect(self.handleAddItemClick)
 
 
     def handleStartingPointClick(self):
         self.instruct('Click to select the starting point.')
         self.blockButtons()   
+
+    def handleSetContainerClick(self):
+        self.instruct('Click to set the container position.')
+        self.blockButtons()           
 
     def handleAddItemClick(self):
         self.instruct('Click to add an object.')

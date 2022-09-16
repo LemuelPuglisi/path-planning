@@ -1,11 +1,17 @@
 import math
 
+from pathplanning.core.base import Point
+
 def normalizeAngle(a):
     while a > math.pi:
         a = a - 2*math.pi
     while a < - math.pi:
         a = a + 2*math.pi
     return a
+
+
+def pointsMatch(point1: Point, point2: Point):
+    return point1.x == point2.x and point1.y == point2.y
 
 
 #----------------------------------------------------------------------------

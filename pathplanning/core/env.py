@@ -1,6 +1,7 @@
 from pathplanning.core.base import SimPoint
 from pathplanning.core.cinematics import Cart
 from pathplanning.core.const import OBS_H, OBS_W, SCALE
+from pathplanning.core.geometry.utils import pointsMatch
 
 
 class Obstacle:
@@ -42,18 +43,22 @@ class Environment:
         
 class PHIDIASEnvironment:
     
-    def __init__(self, cart: Cart):
+    def __init__(self, cart: Cart, container_pos: SimPoint):
         self.cart = cart
+        self.container_pos = container_pos 
         self.items = []
 
     def moveCartStationary(self, point: SimPoint):
         self.cart.reset(point)
-                
+
+    def moveContainer(self, point: SimPoint):
+        self.container_pos = point
+
     def addItem(self, item: SimPoint):
         self.items.append(item)
         
     def removeItem(self, item: SimPoint):
-        self.items = [ i for i in self.items if i.x != item.x and i.y != item.y ]
+        self.items = [ i for i in self.items if not pointsMatch(i, item) ]
         
     def reset(self):
         self.cart.reset(SimPoint(0, 0))

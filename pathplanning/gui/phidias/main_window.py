@@ -1,8 +1,10 @@
+from typing import Optional
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QMainWindow, QWidget, QHBoxLayout
 
 from pathplanning.core.base import DrawPoint
+from pathplanning.core.patterns.observer import Observer
 from pathplanning.core.phidias.handler import PHIDIASHandler
 from pathplanning.gui.phidias.drawing_panel import PHIDIASDrawingPanelWidget
 from pathplanning.gui.phidias.sidebar import PHIDIASSideBarWidget
@@ -16,23 +18,25 @@ class PHIDIASMainWindow(QMainWindow):
                        system: RoboticSystem, 
                        handler: PHIDIASHandler):
         super(PHIDIASMainWindow, self).__init__()
-                  
+        
         self.setWindowTitle("path-planning")
         self.setFixedSize(QSize(1350, 700))
 
         self.env = env
         self.system = system
         self.handler = handler
+        self.handler.setConnectionCb(self.connectionCallback)
 
         self.drawing_panel = PHIDIASDrawingPanelWidget(env, system)
         self.sidebar_widget = PHIDIASSideBarWidget()
+        self.sidebar_widget.blockButtons()
 
         # we move the component "wiring" to the
         # upper component. This can be replaced to 
         # some design patterns later. 
         self.sidebar_widget.starting_point_button.clicked.connect(self.awaitStartingPoint)
+        self.sidebar_widget.set_container_button.clicked.connect(self.awaitContainerSetup)
         self.sidebar_widget.add_item_button.clicked.connect(self.awaitItemAddition)
-
 
         main_layout = QHBoxLayout()
         main_layout.addWidget(self.sidebar_widget)
@@ -62,6 +66,17 @@ class PHIDIASMainWindow(QMainWindow):
         self.env.moveCartStationary(point.toSimPoint())
         self.sidebar_widget.releaseButtons()
         self.drawing_panel.update()
+
+    def awaitContainerSetup(self):
+        self.drawing_panel.mousePressEvent = self.handleContainerSetup        
+
+    def handleContainerSetup(self, event):
+        self.drawing_panel.mousePressEvent = lambda e: None
+        position = event.pos()
+        point = DrawPoint(position.x(), position.y())       
+        self.env.moveContainer(point.toSimPoint())
+        self.sidebar_widget.releaseButtons()
+        self.drawing_panel.update()
         
     def awaitItemAddition(self):
         self.drawing_panel.mousePressEvent = self.handleItemAddition        
@@ -79,3 +94,7 @@ class PHIDIASMainWindow(QMainWindow):
         self.env.addItem(item)
         self.sidebar_widget.releaseButtons()
         self.drawing_panel.update()
+        
+    def connectionCallback(self):
+        self.sidebar_widget.releaseButtons()
+        self.sidebar_widget.instruct('PHIDIAS client connected.')

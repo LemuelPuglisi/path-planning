@@ -6,14 +6,14 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtGui import QColor, QPalette, QPainter, QTransform, QPixmap
 
 from pathplanning.core.algorithms.base import PathPlanningBase
-from pathplanning.core.const import DP_ITEM_PIC_PATH, DP_ROBOT_PIC_PATH, OBS_H, OBS_W, PANEL_H, PANEL_W
+from pathplanning.core.const import DP_ITEM_PIC_PATH, DP_ROBOT_PIC_PATH, OBS_H, OBS_W, PANEL_H, PANEL_W, CNT_H, CNT_W, DP_CONTAINER_PIC_PATH
 from pathplanning.core.dynamics.base import RoboticSystem
-from pathplanning.core.env import Environment
+from pathplanning.core.env import Environment, PHIDIASEnvironment
 
 
 class PHIDIASDrawingPanelWidget(QWidget):
         
-    def __init__(self, env: Environment, system: RoboticSystem):
+    def __init__(self, env: PHIDIASEnvironment, system: RoboticSystem):
         super().__init__()
         self.env = env
         self.system = system
@@ -30,8 +30,10 @@ class PHIDIASDrawingPanelWidget(QWidget):
         current_path = pathlib.Path(__file__).parent.resolve()
         robot_image = str(current_path) + '/../' + DP_ROBOT_PIC_PATH
         item_image = str(current_path) + '/../' + DP_ITEM_PIC_PATH
+        container_image = str(current_path) + '/../' + DP_CONTAINER_PIC_PATH
         self.robot_pic = QPixmap(robot_image)        
-        self.item_pic = QPixmap(item_image)        
+        self.item_pic = QPixmap(item_image)
+        self.container_pic = QPixmap(container_image)
 
         self.delta_t = 1e-2
         self._timer_painter = QTimer(self)
@@ -72,6 +74,12 @@ class PHIDIASDrawingPanelWidget(QWidget):
         qp.setPen(QColor('white'))
         self.draw_measures(qp)
 
+        # ---------------------
+        # Paint the target    
+        # ---------------------    
+        container_pos = self.env.container_pos.toDrawPoint().toTopLeft(CNT_W, CNT_H).toQPoint()
+        qp.drawPixmap(container_pos, self.container_pic)
+
         #---------------------
         # Paint the items    
         #---------------------    
@@ -101,6 +109,13 @@ class PHIDIASDrawingPanelWidget(QWidget):
         # according to theta, so put the obstacles ABOVE
         # this block. 
         qp.drawPixmap(top_left.x, top_left.y, self.robot_pic)
+        
+        # ---------------------
+        # Paint the picked item    
+        # ---------------------
+        if cart.hasItem():
+            qp.drawPixmap(top_left.x, top_left.y, self.item_pic)
+        
         qp.end()
         
         

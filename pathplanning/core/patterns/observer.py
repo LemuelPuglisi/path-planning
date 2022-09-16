@@ -1,11 +1,12 @@
 
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+from typing import Optional
 
 
-class Observer:
+class Observer(ABC):
 
     @abstractmethod
-    def notify(self, topic: str, data: dict = None):
+    def notify(self, topic: str, data: Optional[dict] = None):
         pass
     
 
@@ -20,7 +21,7 @@ class Observable:
         else:
             self.topics[topic].append(obs)
     
-    def notifyObservers(self, topic: str, data: dict = None):
+    def notifyObservers(self, topic: str, data: Optional[dict] = None):
         if topic not in self.topics: return 
         for obs in self.topics[topic]:
             obs.notify(topic, data)

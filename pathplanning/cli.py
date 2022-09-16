@@ -45,8 +45,9 @@ def run_application():
             exit()
         
         cart = Cart(SimPoint(.2, .2))
+        container_pos = SimPoint(.4, .4)
         two_step = TwoStepCartRobot(cart, 1e-5, 1e-2, 1e-3)
-        env = PHIDIASEnvironment(cart)
+        env = PHIDIASEnvironment(cart, container_pos)
         handler = PHIDIASHandler(two_step, env)
         main_window = PHIDIASMainWindow(env, two_step, handler)
         main_window.startSimulation()

@@ -66,10 +66,17 @@ class TwoStepCartRobot(RoboticSystem, Observable):
 
             if distance < self.distance_threshold:
                 if len(self.path) == 0: 
-                    self.notifyObservers('end', { 'target': self.target })
+                    # PHIDIAS task.
+                    item = self.cart.releaseItem()
+                    self.notifyObservers('released', { 'item': item })
+                    
                     self.reset()
                     return True
-                                
+                
+                # PHIDIAS task.
+                self.notifyObservers('picked', { 'item': self.target })
+                self.cart.pickItem(self.target)
+                
                 new_target = self.path.pop()
                 self.target = new_target
                 self.linear_speed_controller.reset()

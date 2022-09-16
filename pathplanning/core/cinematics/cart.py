@@ -1,5 +1,7 @@
 import math
 
+from typing import Optional
+
 from pathplanning.core.base import SimPoint
 from pathplanning.core.const import TWOPI
 
@@ -8,6 +10,7 @@ class Cart:
     def __init__(self, starting_point: SimPoint):
         self._setModelProperties()
         self.reset(starting_point)
+        self.picked_item = None
                 
     def _setModelProperties(self):
         self.M = 1.
@@ -23,6 +26,16 @@ class Cart:
         self.theta = 0
         self.pos = point
         
+    def hasItem(self):
+        return self.picked_item is not None
+        
+    def pickItem(self, item: SimPoint):
+        self.picked_item = item
+        
+    def releaseItem(self) -> Optional[SimPoint]:
+        item = self.picked_item
+        self.picked_item = None
+        return item
 
     @property
     def x(self):
