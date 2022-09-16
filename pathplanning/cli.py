@@ -30,7 +30,7 @@ def run_application():
     if not args.phidias:    
         target = SimPoint(0, 0)
         cart = Cart(SimPoint(0, 0))
-        two_step = TwoStepCartRobot(cart, 1e-5, .1)
+        two_step = TwoStepCartRobot(cart)
         env = Environment(cart, target)
         algo = VoronoiDiagramSolver()
         main_window = MainWindow(env, two_step, algo)
