@@ -50,5 +50,6 @@ The program will be freezed until a PHIDIAS client connects to it. Open  another
 path-planning-strategy
 ```
 
-This will pop-up a PHIDIAS terminal where you can run the `connect()` proactive procudure and unfreeze the program.
+This will pop-up a PHIDIAS terminal where you can run the `connect()` proactive procedure and unfreeze the program.
 Add items using the buttons and then run the `pick()` proactive procedure to run the strategy.
+
