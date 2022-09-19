@@ -18,7 +18,8 @@ setuptools.setup(name='path-planning',
                  install_requires=[
                     'numpy',
                     'PyQT5',
-                    'networkx'
+                    'networkx', 
+                    'requests'
                  ],
                  license='MIT License',
                  zip_safe=False,
