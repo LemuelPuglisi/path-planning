@@ -14,6 +14,16 @@ def pointsMatch(point1: Point, point2: Point):
     return point1.x == point2.x and point1.y == point2.y
 
 
+def cellIntersectsObstacle(cell_TR, cell_BL, obs_TR, obs_BL):
+    """ Separating axis theorem. """
+    return not (
+        cell_TR.x < obs_BL.x or 
+        cell_BL.x > obs_TR.x or 
+        cell_TR.y > obs_BL.y or # y axis checks are flipped
+        cell_BL.y < obs_TR.y    # because we consider painting reference.
+    )
+
+
 #----------------------------------------------------------------------------
 # The following code is taken from GeekForGeeks
 # https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect

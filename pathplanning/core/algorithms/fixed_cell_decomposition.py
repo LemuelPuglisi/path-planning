@@ -7,6 +7,7 @@ from pathplanning.core.algorithms.base import PathPlanningBase
 from pathplanning.core.base import DrawPoint, SimPoint
 from pathplanning.core.env import Environment
 from pathplanning.core.const import OBS_H, OBS_W, PANEL_H, PANEL_W
+from pathplanning.core.geometry import cellIntersectsObstacle
 
 
 class FixedCellDecomposition(PathPlanningBase):
@@ -117,21 +118,10 @@ class FixedCellDecomposition(PathPlanningBase):
                     _obs = obs.toDrawPoint().toTopLeft(OBS_W, OBS_H)
                     _obs_BL = _obs.translate(0, OBS_H)
                     _obs_TR = _obs.translate(OBS_W, 0)
-                    if self._cellIntersectsObstacle(cell_TR, cell_BL, _obs_TR, _obs_BL):
+                    if cellIntersectsObstacle(cell_TR, cell_BL, _obs_TR, _obs_BL):
                         cells_matrix[i, j] = self.INFINITY
-                        break
-        self.cells_matrix = cells_matrix
-    
-    
-    def _cellIntersectsObstacle(self, cell_TR, cell_BL, obs_TR, obs_BL) -> bool:
-        """ Separating axis theorem. """
-        return not (
-            cell_TR.x < obs_BL.x or 
-            cell_BL.x > obs_TR.x or 
-            cell_TR.y > obs_BL.y or # y axis checks are flipped
-            cell_BL.y < obs_TR.y    # because we consider painting reference.
-        )
-        
+                        break                    
+        self.cells_matrix = cells_matrix        
         
     def _computeManhattanDistances(self):
         cells_matrix = self.cells_matrix

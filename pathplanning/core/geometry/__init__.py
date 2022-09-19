@@ -1,1 +1,1 @@
-from .utils import normalizeAngle, segmentsIntersects
+from .utils import normalizeAngle, segmentsIntersects, cellIntersectsObstacle
